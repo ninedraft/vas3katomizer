@@ -14,20 +14,20 @@ jobs:
       # - 1.18rc1 -> 1.18.0-rc.1
       GO_VERSION: '1.23'
     steps:
-      - uses: actions/checkout@692973e
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Install Go
-        uses: actions/setup-go@0a12ed9
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Create release
-        uses: goreleaser/goreleaser-action@286f3b1
+        uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200
         with:
           version: latest
           args: release --clean --timeout=90m
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ko-build/setup-ko@3aebd05
+      - uses: ko-build/setup-ko@3aebd0597dc1e9d1a26bcfdb7cbeb19c131d3037
       - run: ko build -P
 
