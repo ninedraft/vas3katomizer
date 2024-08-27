@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/gorilla/feeds"
 	"github.com/ninedraft/vas3katomizer/internal/feedgen"
@@ -52,7 +53,10 @@ func main() {
 		panic("VAS3KCLUB_TOKEN env is not set")
 	}
 
-	feedEndpoint := cmp.Or(os.Getenv("VAS3KCLUB_FEED"), "https://vas3k.club/")
+	feedEndpoint := cmp.Or(os.Getenv("VAS3KCLUB_ENDPOINT"), "https://vas3k.club/")
+
+	blockedTypes := parseArray(cmp.Or(os.Getenv("BLOCKED_TYPES"), "intro"))
+	blockedAuthors := parseArray(cmp.Or(os.Getenv("BLOCKED_AUTHORS")))
 
 	// --- end of config ---
 
@@ -60,12 +64,11 @@ func main() {
 
 	ctx := context.Background()
 
-	proc := &processor.Processor{
-		Client: client,
-		BlockedTypes: []string{
-			"intro",
-		},
-	}
+	proc := processor.New(processor.Config{
+		Client:         client,
+		BlockedTypes:   blockedTypes,
+		BlockedAuthors: blockedAuthors,
+	})
 
 	mux := http.NewServeMux()
 
@@ -182,4 +185,10 @@ func initLogger() {
 		})
 
 	slog.SetDefault(slog.New(handler))
+}
+
+func parseArray(value string) []string {
+	return strings.FieldsFunc(value, func(r rune) bool {
+		return unicode.IsSpace(r) || strings.ContainsRune(`,;|/`, r)
+	})
 }

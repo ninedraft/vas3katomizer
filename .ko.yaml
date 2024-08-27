@@ -1,0 +1,17 @@
+defaultBaseImage: cgr.dev/chainguard/static@sha256:791657dd88dea8c1f9d3779815429f9c681a9a2778fc66dac3fbf550e1f1d9c8
+
+defaultPlatforms:
+  - linux/arm64
+  - linux/amd64
+
+defaultEnv:
+- SERVE_AT=0.0.0.0:8390
+
+builds:
+  - main: ./
+    flags:
+      - -trimpath
+    ldflags: 
+      - '-w'
+    env:
+      - CGO_ENABLED=0

@@ -25,6 +25,15 @@ type FeedItem struct {
 	Club          ClubInfo     `json:"_club"`
 }
 
+func (item *FeedItem) AuthorsUsernames() []string {
+	usernames := make([]string, 0, len(item.Authors))
+	for _, author := range item.Authors {
+		usernames = append(usernames, path.Base(author.URL))
+	}
+
+	return usernames
+}
+
 func (item *FeedItem) Ref() string {
 	return path.Join(item.Club.Type, item.Club.Slug) + ".json"
 }
